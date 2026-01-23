@@ -17,3 +17,9 @@ et donc modifier le code/voir tout le code:
 marimo edit perceptron.py
 ```
 
+### Trace de mon travail
+
+![question3](question3.png)
+
+On peut voir à gauche le dataset que j'ai choisi, et que je suis en train de charger dans le notebook marimo.
+A droite, on peut voir la documentation de scikit-learn. 
