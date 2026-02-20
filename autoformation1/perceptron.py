@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.19.4"
+__generated_with = "0.19.5"
 app = marimo.App(width="medium")
 
 
@@ -299,8 +299,8 @@ def _(
 @app.cell
 def _(mo, np, results_my_percepton, scores, y_test_health):
     mo.md(f"""
-    Mon perceptron a eu un score de {np.sum(results_my_percepton==y_test_health)/len(y_test_health):.2f}% 
-    tandis que le perceptron de scikit-learn a eu un score de {scores:.2f}%
+    Mon perceptron a eu un score de {np.sum(results_my_percepton==y_test_health)/len(y_test_health)*100:.2f}% 
+    tandis que le perceptron de scikit-learn a eu un score de {scores*100:.2f}%
     """)
     return
 

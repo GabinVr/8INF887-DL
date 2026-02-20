@@ -2,3 +2,7 @@ ressources/
 __marimo__
 .venv/
 .DS_Store
+*.zip
+*.pdf
+cifar-10-*
+data/
