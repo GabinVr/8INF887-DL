@@ -238,10 +238,11 @@ def _(mo):
 
 
 @app.cell
-def _(pd):
+def _(mo, pd):
     national_poll_on_healthy_aging_npha = pd.read_csv('https://archive.ics.uci.edu/static/public/936/data.csv',header=None)
 
-    national_poll_on_healthy_aging_npha.head()
+    with mo.redirect_stdout():
+        national_poll_on_healthy_aging_npha.head()
     return (national_poll_on_healthy_aging_npha,)
 
 
@@ -275,33 +276,26 @@ def _(
     Sk_perceptron,
     X_test_health,
     X_train_health,
+    mo,
     np,
     y_test_health,
     y_train_health,
 ):
-    my_multiclass_perceptron = PerceptronMultiClass()
-    sk_perceptron = Sk_perceptron()
-
-
-    my_multiclass_perceptron.fit(X_train_health, y_train_health)
-
-
-    results_my_percepton = np.array([ my_multiclass_perceptron.predict(X) for X in X_test_health])
-
-    print(f"My perceptron got: {np.sum(results_my_percepton==y_test_health)/len(y_test_health):.2f}%")
-
-    sk_perceptron.fit(X_train_health, y_train_health)
-    scores = sk_perceptron.score(X=X_test_health, y=y_test_health)
-    print(f"Sklearn implementation fot {scores:.2f}%")
-    return results_my_percepton, scores
-
-
-@app.cell
-def _(mo, np, results_my_percepton, scores, y_test_health):
-    mo.md(f"""
-    Mon perceptron a eu un score de {np.sum(results_my_percepton==y_test_health)/len(y_test_health)*100:.2f}% 
-    tandis que le perceptron de scikit-learn a eu un score de {scores*100:.2f}%
-    """)
+    with mo.redirect_stdout():
+        my_multiclass_perceptron = PerceptronMultiClass()
+        sk_perceptron = Sk_perceptron()
+    
+    
+        my_multiclass_perceptron.fit(X_train_health, y_train_health)
+    
+    
+        results_my_percepton = np.array([ my_multiclass_perceptron.predict(X) for X in X_test_health])
+    
+        print(f"My perceptron got: {np.sum(results_my_percepton==y_test_health)*100/len(y_test_health):.2f}%")
+    
+        sk_perceptron.fit(X_train_health, y_train_health)
+        scores = sk_perceptron.score(X=X_test_health, y=y_test_health)
+        print(f"Sklearn implementation fot {scores*100:.2f}%")
     return
 
 

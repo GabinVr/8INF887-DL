@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8INF887 - Deep Learning - Autoformations (TP)</title>
+    <style>
+        @font-face {
+            font-family: 'PT Sans';
+            font-style: normal;
+            font-weight: 400;
+            src: url('https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.19.7/dist/assets/PTSans-Regular-CxL0S8W7.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'PT Sans';
+            font-style: normal;
+            font-weight: 700;
+            src: url('https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.19.7/dist/assets/PTSans-Bold-D9fedIX3.ttf') format('truetype');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PT Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #1a1a1a;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .header h1::before {
+            content: '🏔️ ';
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .header .author {
+            margin-top: 16px;
+            font-size: 0.95rem;
+            color: #888;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-color: #d1d5db;
+        }
+
+        .card-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: #f3f4f6;
+            color: #374151;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .card p {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .card .topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .card .topic-tag {
+            background: #f3f4f6;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #4b5563;
+            font-weight: 500;
+            border: 1px solid #e5e7eb;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 24px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            body {
+                padding: 20px 16px;
+            }
+        }
+
+        .info-box {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 40px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box h3 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .info-box h3::before {
+            content: '📚 ';
+        }
+
+        .info-box p {
+            color: #6b7280;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Deep Learning</h1>
+            <p>8INF887 - Travaux d'autoformation</p>
+            <p class="author">Gabin VRILLAULT - 2026</p>
+        </div>
+
+        <div class="info-box">
+            <h3>À propos</h3>
+            <p>Cette série d'autoformations explore les fondamentaux du deep learning, du perceptron simple aux réseaux de neurones profonds, en utilisant des notebooks interactifs Marimo.</p>
+        </div>
+
+        <div class="cards-container">
+            <a href="autoformation1/autoformation1.html" class="card">
+                <div class="card-number">1</div>
+                <h2>Perceptron</h2>
+                <p>Introduction aux réseaux de neurones avec l'implémentation d'un perceptron simple.</p>
+                <div class="topics">
+                    <span class="topic-tag">Perceptron</span>
+                    <span class="topic-tag">Classification</span>
+                    <span class="topic-tag">Numpy</span>
+                </div>
+            </a>
+
+            <a href="autoformation2/autoformation2.html" class="card">
+                <div class="card-number">2</div>
+                <h2>MLP Multi-Couches</h2>
+                <p>Extension du perceptron pour supporter un nombre arbitraire de couches cachées. Test sur MNIST et CIFAR-10.</p>
+                <div class="topics">
+                    <span class="topic-tag">MLP</span>
+                    <span class="topic-tag">Backpropagation</span>
+                    <span class="topic-tag">MNIST</span>
+                    <span class="topic-tag">CIFAR-10</span>
+                </div>
+            </a>
+
+            <a href="autoformation3/autoformation3.html" class="card">
+                <div class="card-number">3</div>
+                <h2>MNIST avec PyTorch</h2>
+                <p>Implémentation d'un réseau de neurones pour la classification MNIST avec PyTorch.</p>
+                <div class="topics">
+                    <span class="topic-tag">PyTorch</span>
+                    <span class="topic-tag">MNIST</span>
+                    <span class="topic-tag">CNN</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Développé avec ❤️ en utilisant <a href="https://marimo.io" target="_blank">Marimo</a></p>
+            <p>UQAC - Université du Québec à Chicoutimi</p>
+        </div>
+    </div>
+</body>
+</html>

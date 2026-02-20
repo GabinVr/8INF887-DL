@@ -86,7 +86,7 @@ def _(expit, np, sys):
             self.decrease_const = decrease_const
             self.shuffle = shuffle
             self.minibatches = minibatches
-        
+
         def _encode_labels(self, y, k):
             """Encode labels into one-hot representation
 
@@ -158,7 +158,7 @@ def _(expit, np, sys):
                 Input layer with original features.
             W : list of arrays
                 List of weight matrices for each layer.
-        
+
             Returns
             ----------
             A : list of arrays
@@ -244,16 +244,16 @@ def _(expit, np, sys):
 
             for i in range(len(W) - 1, 0, -1): # On itère à l'envers 
                 Z_prev = Z[i-1]
-            
+
                 Z_prev = self._add_bias_unit(Z_prev, how='row')
                 sigma_next = W[i].T.dot(sigma) * self._sigmoid_gradient(Z_prev)
                 sigma_next = sigma_next[1:, :]
 
                 grads[i] = sigma.dot(A[i].T)
                 sigma = sigma_next
-        
+
             grads[0] = sigma.dot(A[0])
-        
+
             for i,_ in enumerate(grads):
                 grads[i][:, 1:] += self.l2 * W[i][:, 1:]
                 grads[i][:, 1:] += self.l1 * np.sign(W[i][:, 1:])
@@ -324,7 +324,7 @@ def _(expit, np, sys):
                 if self.shuffle:  # on mélange le dataset à chaque epoch
                     idx = np.random.permutation(y_data.shape[0])
                     X_data, y_enc = X_data[idx], y_enc[:, idx]
-            
+
                 mini = np.array_split(range(y_data.shape[0]),
                                       self.minibatches)  # Si le mode minibatch est activé, le dataset en entrée est divisé en batch pour le calcul des gradients
                 for idx in mini:
@@ -345,8 +345,6 @@ def _(expit, np, sys):
                     delta_W_prev = delta_w
 
             return self
-
-
     return (NeuralNetMLP,)
 
 
@@ -569,7 +567,7 @@ def _(mo):
 
 
 @app.cell
-def _(NeuralNetMLP, mo, np, os, plt, struct):
+def _(NeuralNetMLP, mo, np, os, struct):
     mo.show_code()
     current_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(current_dir)
@@ -608,42 +606,46 @@ def _(NeuralNetMLP, mo, np, os, plt, struct):
                       random_state=1)
 
     nn.fit(X_train, y_train, print_progress=True)
+    return X_test, X_train, nn, y_test, y_train
 
+
+@app.cell
+def _(X_test, X_train, mo, nn, np, plt, y_test, y_train):
+    # Graphique 1: Coûts bruts
+    plt.figure(figsize=(10, 6))
     plt.plot(range(len(nn.cost_)), nn.cost_)
     plt.ylim([0, 2000])
     plt.ylabel('Cost')
     plt.xlabel('Epochs * 50')
     plt.tight_layout()
-    # plt.savefig('./figures/cost.png', dpi=300)
-    plt.show()
+    fig1 = plt.gcf()
 
+    # Graphique 2: Coûts moyens
     batches = np.array_split(range(len(nn.cost_)), 1000)
     cost_ary = np.array(nn.cost_)
     cost_avgs = [np.mean(cost_ary[i]) for i in batches]
 
+    plt.figure(figsize=(10, 6))
     plt.plot(range(len(cost_avgs)), cost_avgs, color='red')
     plt.ylim([0, 2000])
     plt.ylabel('Cost')
     plt.xlabel('Epochs')
     plt.tight_layout()
-    #plt.savefig('./figures/cost2.png', dpi=300)
-    plt.show()
+    fig2 = plt.gcf()
 
-
+    # Calcul des précisions
     y_train_pred = nn.predict(X_train)
-    acc = np.sum(y_train == y_train_pred, axis=0) / X_train.shape[0]
-    print('Training accuracy: %.2f%%' % (acc * 100))
+    acc_train = np.sum(y_train == y_train_pred, axis=0) / X_train.shape[0]
 
     y_test_pred = nn.predict(X_test)
-    acc = np.sum(y_test == y_test_pred, axis=0) / X_test.shape[0]
-    print('Test accuracy: %.2f%%' % (acc * 100))
+    acc_test = np.sum(y_test == y_test_pred, axis=0) / X_test.shape[0]
 
-
+    # Graphique 3: Images mal classées
     miscl_img = X_test[y_test != y_test_pred][:25]
     correct_lab = y_test[y_test != y_test_pred][:25]
     miscl_lab = y_test_pred[y_test != y_test_pred][:25]
 
-    fig, ax = plt.subplots(nrows=5, ncols=5, sharex=True, sharey=True,)
+    fig3, ax = plt.subplots(nrows=5, ncols=5, figsize=(15, 15), sharex=True, sharey=True)
     ax = ax.flatten()
     for i in range(25):
         img = miscl_img[i].reshape(28, 28)
@@ -653,38 +655,20 @@ def _(NeuralNetMLP, mo, np, os, plt, struct):
     ax[0].set_xticks([])
     ax[0].set_yticks([])
     plt.tight_layout()
-    # plt.savefig('./figures/mnist_miscl.png', dpi=300)
-    plt.show()
 
-
-    return
-
-
-@app.cell
-def _(mo):
-    mo.image("./public/image.png")
-    return
-
-
-@app.cell
-def _(mo):
-    mo.image("./public/image2.png")
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(r"""
-    Training accuracy: 98.02%
-
-    Test accuracy: 96.24%
-    """)
-    return
-
-
-@app.cell
-def _(mo):
-    mo.image("./public/image3.png")
+    mo.vstack([
+        mo.md(f"### Évolution du coût pendant l'entraînement"),
+        fig1,
+        mo.md(f"### Coût moyen par epoch"),
+        fig2,
+        mo.md(f"""
+        ### Résultats
+        - **Précision sur l'ensemble d'entraînement:** {acc_train*100:.2f}%
+        - **Précision sur l'ensemble de test:** {acc_test*100:.2f}%
+        """),
+        mo.md(f"### Images mal classées (MNIST)"),
+        fig3
+    ])
     return
 
 
@@ -729,14 +713,18 @@ def _(NeuralNetMLP, mo, plt):
         9: 'truck'
     }
 
-    def display():
-        img_cifar = X_train_cifar10[0].reshape(3, 32, 32).transpose(1, 2, 0)  # Reshape and transpose to get the correct format for
-        plt.imshow(img_cifar)
-        plt.title(f"Label: {labels_map[y_train_cifar10[0]]}")
-        plt.axis('off')
-        plt.show()
+    # Affichage d'un exemple CIFAR-10
+    img_cifar = X_train_cifar10[0].reshape(3, 32, 32).transpose(1, 2, 0)
+    plt.figure(figsize=(6, 6))
+    plt.imshow(img_cifar)
+    plt.title(f"Label: {labels_map[y_train_cifar10[0]]}")
+    plt.axis('off')
+    fig_cifar_example = plt.gcf()
 
-    mo.show_code(display())
+    mo.vstack([
+        mo.md("### Exemple d'image CIFAR-10"),
+        fig_cifar_example
+    ])
 
     nn_cifar = NeuralNetMLP(n_output=10,
                       n_features=X_train_cifar10.shape[1],
@@ -751,6 +739,7 @@ def _(NeuralNetMLP, mo, plt):
                       minibatches=50,
                       shuffle=True,
                       random_state=1)   
+
     return (
         X_test_cifar10,
         X_train_cifar10,
@@ -761,31 +750,29 @@ def _(NeuralNetMLP, mo, plt):
 
 
 @app.cell
-def _(mo):
-    mo.image("public/frog.png")
-    return
-
-
-@app.cell
-def _(X_train_cifar10, nn_cifar, np, plt, y_test_cifar10, y_train_cifar10):
+def _(X_train_cifar10, nn_cifar, np, y_test_cifar10, y_train_cifar10):
     y_train_ = np.array(y_train_cifar10, dtype=int)
     y_test_ = np.array(y_test_cifar10, dtype=int)
 
-
-
     nn_cifar.fit(X_train_cifar10, y_train_, print_progress=True)
+    return y_test_, y_train_
 
+
+@app.cell
+def _(mo, nn_cifar, plt):
+    plt.figure(figsize=(10, 6))
     plt.plot(range(len(nn_cifar.cost_)), nn_cifar.cost_)
     plt.ylim([0, 2000])
     plt.ylabel('Cost')
     plt.xlabel('Epochs * 50')
     plt.tight_layout()
+    fig_cifar_cost = plt.gcf()
 
-    plt.show()
-
-
-
-    return y_test_, y_train_
+    mo.vstack([
+        mo.md("### Évolution du coût pendant l'entraînement (CIFAR-10)"),
+        fig_cifar_cost
+    ])
+    return
 
 
 @app.cell
@@ -797,7 +784,6 @@ def _(X_test_cifar10, X_train_cifar10, nn_cifar, np, y_test_, y_train_):
 
     y_test_pred_cifar10 = nn_cifar.predict(X_test_cifar10)
     accuracy_test = np.sum(y_test_ == y_test_pred_cifar10, axis=0) / X_test_cifar10.shape[0]
-
     return accuracy_test, accuracy_train
 
 
